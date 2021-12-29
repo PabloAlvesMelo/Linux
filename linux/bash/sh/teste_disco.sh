@@ -10,7 +10,7 @@ T=$(ls -lh $file|awk '{print $5}')
 
 for i in {1..10}
  do
- echo "criando diretorio $dir/$i"
+ echo "Criando diretorio $dir/$i"
  mkdir $i
  echo "Copiando arquivo $dir/$i/$file - $T"
  cp $file $i
