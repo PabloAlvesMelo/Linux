@@ -16,7 +16,7 @@ espaco=$(du -hs $HOME|awk '{print $1}')
 now=$(date  "+%d/%m/%Y - %H:%M")
 nprocess=$(ps aux | wc -l)
 nusers=$(who|wc -l)
-dfree=$(df -h|grep Root-root|awk '{print $4}')
+dfree=$(df -h $PWD | awk '/[0-9]%/{print $(NF-2)}')
 mfree=$(free|grep Mem|awk '{print $4/$2 * 100.0}'|cut -d'.' -f1)
 sfree=$(free|grep Swap|awk '{print $4/$2 * 100.0}'|cut -d'.' -f1)
 #
