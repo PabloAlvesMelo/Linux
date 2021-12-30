@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# clear
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+
+if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+        # Fall back to using the very slow lsb_release utility
+        DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+fi
+proc=$(grep -m1 "^model name" /proc/cpuinfo | sed -e "s/.*: //" -e "s:\s\+: :g"|tr -d '@')
+up=$(uptime|cut -d' ' -f4-5|tr -d ',')
+load=$(uptime|cut -d':' -f4|cut -d',' -f1)
+if="eth0"
+ip=$(ip a s $if | grep inet | awk '{ print $2 }' | head -1)
+espaco=$(du -hs $HOME|awk '{print $1}')
+now=$(date  "+%d/%m/%Y - %H:%M")
+nprocess=$(ps aux | wc -l)
+nusers=$(who|wc -l)
+dfree=$(df -h|grep Root-root|awk '{print $4}')
+mfree=$(free|grep Mem|awk '{print $4/$2 * 100.0}'|cut -d'.' -f1)
+sfree=$(free|grep Swap|awk '{print $4/$2 * 100.0}'|cut -d'.' -f1)
+#
+printf "\n * * * Seja bem vindo \e[31;1m`whoami|tr "[:lower:]" "[:upper:]"`\e[m, este e o servidor \e[33;1m$HOSTNAME \e[m * * *\n"
+printf " \nInformacao do sistema em $(date)\n";
+printf " * Processador:\t\e[33;1m$proc \e[m \n";
+printf " * System Load:\t\e[33;1m$load    \e[m\t Processes:   \t\e[33;1m$nprocess \e[m \n";
+printf " * Up Time:    \t\e[33;1m$up      \e[m\t Online Users:\t\e[33;1m$nusers \e[m   \n";
+printf " * Memory free:\t \e[33;1m$mfree%% \e[m\t\t Disk free: \t\e[33;1m$dfree \e[m    \n";
+printf " * Swap free:  \t \e[33;1m$sfree%% \e[m\t\t Address:   \t\e[33;1m$ip \e[m       \n";
+echo -e " * Espaco usado em \e[31;1m$HOME\e[m: \e[33;1m$espaco \e[m \n\n";
