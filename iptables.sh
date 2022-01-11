@@ -9,8 +9,8 @@ net='192.168.0.0/22'
 # => wan(internet)
 eth2='eth1' 
 ip2='1.1.1.1'
-_ssh='8899'
-_mysql='3306'
+portSsh='8899'
+portMysql='3306'
 ncon='20'
 #===================================================================
 clear
@@ -71,7 +71,7 @@ $ipt -A INPUT  -i lo -j ACCEPT
 echo -e "\e[96m-> LIBERAR PORTAS ACESSO EXTERNO TCP----------------------\e[92m OK \e[0m"
 tcp=(
  21   # FTP 
-$_ssh # SSH
+$portSsh # SSH
  23   # TELNET
  53   # DNS
  80   # HTTP 
@@ -103,8 +103,8 @@ echo -e "\e[96m-> ACESSO AO BANCO MYSQL ---------------------------------\e[92m 
 mysql=(172.16.0.1)
  for a in "${mysql[@]}"
  do
-   $ipt -A INPUT  -p tcp -s $a --dport $_mysql -j ACCEPT
-#   $ipt -A OUTPUT -p tcp -s $a --dport $_mysql -j ACCEPT
+   $ipt -A INPUT  -p tcp -s $a --dport $portMysql -j ACCEPT
+#   $ipt -A OUTPUT -p tcp -s $a --dport $portMysql -j ACCEPT
    echo -e "Acesso pelo ip \e[93m$a\e[0m liberado"
  done
 #====================================================================
@@ -113,7 +113,7 @@ echo -e "\e[96m-> ACESSO AO SSH -----------------------------------------\e[92m 
 ssh=(172.16.0.1)
  for a in "${ssh[@]}"
  do
-   $ipt -A INPUT  -p tcp -s $a --dport $_ssh -j ACCEPT
+   $ipt -A INPUT  -p tcp -s $a --dport $portSsh -j ACCEPT
    echo -e "Acesso pelo ip \e[93m$a\e[0m liberado"
  done
 #====================================================================
@@ -130,7 +130,7 @@ echo -e "\e[96m-> ESTABILIZA CONEXOES ABERTAS ---------------------------\e[92m 
 $ipt -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT 
 #====================================================================
 echo -e "\e[96m-> LIMITANDO NUMERO DE CONEXAO ---------------------------\e[92m OK \e[0m"
-$ipt -A INPUT -p tcp --syn --dport $_ssh -m connlimit --connlimit-above $ncon -j REJECT
+$ipt -A INPUT -p tcp --syn --dport $portSsh -m connlimit --connlimit-above $ncon -j REJECT
 echo -e "Conexoes simultaneas de um mesmo ip \e[93m$ncon\e[0m"
 #====================================================================
 echo -e "\e[96m-> REDIRECIONAMENTO DE PORTAS ----------------------------\e[92m OK \e[0m"
